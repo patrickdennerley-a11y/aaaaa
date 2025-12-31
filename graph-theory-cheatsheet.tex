@@ -1,0 +1,311 @@
+\documentclass[8pt,landscape,a4paper]{extarticle}
+\usepackage[margin=0.4cm]{geometry}
+\usepackage{multicol}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage[framemethod=TikZ]{mdframed}
+\usepackage{bm}
+\usepackage{tikz}
+
+% Compact spacing
+\setlist{nosep, leftmargin=*}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\setlength{\columnsep}{0.3cm}
+\pagestyle{empty}
+
+% Box styling
+\mdfdefinestyle{theorembox}{
+    linecolor=blue!70!black,
+    linewidth=0.5pt,
+    backgroundcolor=blue!5,
+    innertopmargin=2pt,
+    innerbottommargin=2pt,
+    innerleftmargin=3pt,
+    innerrightmargin=3pt,
+    skipabove=2pt,
+    skipbelow=2pt
+}
+
+\mdfdefinestyle{defbox}{
+    linecolor=red!70!black,
+    linewidth=0.5pt,
+    backgroundcolor=red!3,
+    innertopmargin=2pt,
+    innerbottommargin=2pt,
+    innerleftmargin=3pt,
+    innerrightmargin=3pt,
+    skipabove=2pt,
+    skipbelow=2pt
+}
+
+\newcommand{\thm}[1]{\begin{mdframed}[style=theorembox]\textbf{Theorem.} #1\end{mdframed}}
+\newcommand{\defn}[1]{\begin{mdframed}[style=defbox]\textbf{Definition.} #1\end{mdframed}}
+\newcommand{\heading}[1]{\vspace{1pt}\noindent\textbf{\large #1}\vspace{1pt}\hrule\vspace{2pt}}
+
+\begin{document}
+\begin{multicols}{2}
+
+\begin{center}
+\textbf{\LARGE Graph Theory Cheat Sheet (MAST30011)}
+\end{center}
+
+% ============================================================
+\heading{1. Fundamentals}
+% ============================================================
+
+\defn{A \textbf{graph} $G = (V,E)$ consists of a finite set $V$ of \textbf{vertices} and a set $E$ of \textbf{edges}, where each edge is an unordered pair $\{u,v\}$ with $u,v \in V$.}
+
+\textbf{Notation:}
+\begin{itemize}[nosep]
+    \item $|V| = n$, $|E| = m$ (order and size).
+    \item $d(v)$ = degree of vertex $v$.
+    \item $\delta(G)$ = minimum degree, $\Delta(G)$ = maximum degree.
+    \item $N(v)$ = neighborhood of $v$.
+\end{itemize}
+
+\thm{\textbf{Handshaking Lemma:} $\sum_{v \in V} d(v) = 2m$. Corollary: The number of odd-degree vertices is even.}
+
+\defn{A \textbf{degree sequence} is the non-increasing list of vertex degrees. A sequence is \textbf{graphical} if it is the degree sequence of some graph.}
+
+\thm{\textbf{Havel-Hakimi Theorem:} A sequence $d_1 \geq d_2 \geq \cdots \geq d_n$ (with $d_1 \geq 1$) is graphical iff the sequence $d_2 - 1, d_3 - 1, \ldots, d_{d_1+1} - 1, d_{d_1+2}, \ldots, d_n$ (reordered non-increasing) is graphical. Base: sequence of all zeros is graphical.}
+
+\defn{Graphs $G$ and $H$ are \textbf{isomorphic} ($G \cong H$) if there exists a bijection $\phi: V(G) \to V(H)$ such that $\{u,v\} \in E(G) \iff \{\phi(u),\phi(v)\} \in E(H)$.}
+
+\textbf{Isomorphism invariants:} $|V|$, $|E|$, degree sequence, $\chi(G)$, $\kappa(G)$, girth, diameter.
+
+\defn{A graph is \textbf{bipartite} if $V$ can be partitioned into sets $A$ and $B$ such that every edge has one end in $A$ and one in $B$. Notation: $K_{m,n}$ = complete bipartite graph.}
+
+\thm{\textbf{Bipartite Characterization:} $G$ is bipartite $\iff$ $G$ contains no odd cycles.}
+
+\textbf{Complete graphs:} $K_n$ has $\binom{n}{2}$ edges. $d(v) = n-1$ for all $v$.
+
+\textbf{Complement:} $\overline{G}$ has same vertices; $\{u,v\} \in E(\overline{G}) \iff \{u,v\} \notin E(G)$.
+
+% ============================================================
+\heading{2. Connectivity \& Paths}
+% ============================================================
+
+\defn{\textbf{Walk:} sequence $v_0, e_1, v_1, e_2, \ldots, e_k, v_k$ where $e_i = \{v_{i-1}, v_i\}$.\\
+\textbf{Trail:} walk with distinct edges.\\
+\textbf{Path:} walk with distinct vertices (hence distinct edges).\\
+\textbf{Cycle:} closed walk $v_0, \ldots, v_k$ with $v_0 = v_k$, $k \geq 3$, and $v_0, \ldots, v_{k-1}$ distinct.}
+
+\defn{$G$ is \textbf{connected} if there is a path between every pair of vertices. A \textbf{component} is a maximal connected subgraph.}
+
+\defn{\textbf{Distance} $d(u,v)$ = length of shortest path from $u$ to $v$ (or $\infty$ if none exists).\\
+\textbf{Diameter:} $\text{diam}(G) = \max_{u,v} d(u,v)$.\\
+\textbf{Girth:} length of shortest cycle (or $\infty$ if acyclic).}
+
+\defn{A vertex $v$ is a \textbf{cut-vertex} (or articulation point) if $G - v$ has more components than $G$.\\
+An edge $e$ is a \textbf{bridge} (or cut-edge) if $G - e$ has more components than $G$.}
+
+\thm{An edge is a bridge $\iff$ it is not contained in any cycle.}
+
+\defn{\textbf{Vertex-connectivity} $\kappa(G)$ = minimum size of a vertex set whose removal disconnects $G$ (or reduces it to $K_1$). For $K_n$, set $\kappa(K_n) = n-1$.\\
+\textbf{Edge-connectivity} $\lambda(G)$ = minimum size of an edge set whose removal disconnects $G$.}
+
+\textbf{Inequality:} $\kappa(G) \leq \lambda(G) \leq \delta(G)$.
+
+\defn{$G$ is \textbf{$k$-connected} if $\kappa(G) \geq k$. Equivalently (for $n \geq k+1$), every set of $k-1$ vertices removed leaves $G$ connected.}
+
+\thm{\textbf{Menger's Theorem (Vertex Form):} For non-adjacent vertices $u,v$ in graph $G$, the minimum size of a vertex set separating $u$ and $v$ equals the maximum number of internally vertex-disjoint $u$-$v$ paths.}
+
+\thm{\textbf{Menger's Theorem (Edge Form):} The minimum size of an edge set separating $u$ and $v$ equals the maximum number of edge-disjoint $u$-$v$ paths.}
+
+\thm{\textbf{Global Menger:} $G$ is $k$-connected $\iff$ for every pair $u,v$ of distinct vertices, there exist $k$ internally vertex-disjoint paths from $u$ to $v$.}
+
+\defn{A \textbf{block} is a maximal connected subgraph with no cut-vertex (i.e., 2-connected or $K_1$ or $K_2$). The \textbf{block-cut tree} has a node for each block and each cut-vertex, with edges connecting cut-vertices to blocks containing them.}
+
+% ============================================================
+\heading{3. Trees}
+% ============================================================
+
+\defn{A \textbf{tree} is a connected acyclic graph. A \textbf{forest} is an acyclic graph (disjoint union of trees).}
+
+\thm{\textbf{Tree Characterizations:} For a graph $G$ with $n$ vertices, the following are equivalent:
+\begin{itemize}[nosep]
+    \item $G$ is a tree.
+    \item $G$ is connected and has $n-1$ edges.
+    \item $G$ is acyclic and has $n-1$ edges.
+    \item $G$ is connected and every edge is a bridge.
+    \item Any two vertices are connected by a unique path.
+    \item $G$ is acyclic, and adding any edge creates exactly one cycle.
+\end{itemize}}
+
+\defn{A \textbf{spanning tree} of $G$ is a subgraph that is a tree and contains all vertices of $G$.}
+
+\thm{$G$ is connected $\iff$ $G$ has a spanning tree.}
+
+\thm{\textbf{Cayley's Formula:} The complete graph $K_n$ has exactly $n^{n-2}$ spanning trees.}
+
+\defn{The \textbf{Laplacian matrix} $L(G) = D(G) - A(G)$, where $D$ is the diagonal degree matrix and $A$ is the adjacency matrix.}
+
+\thm{\textbf{Matrix Tree Theorem:} The number of spanning trees of $G$ equals any cofactor of $L(G)$ (i.e., determinant of any $(n-1) \times (n-1)$ minor obtained by deleting row $i$ and column $i$).}
+
+\textbf{Algorithms:}
+\begin{itemize}[nosep]
+    \item \textbf{Kruskal's:} Sort edges by weight; greedily add edges that don't create cycles. Complexity: $O(m \log m)$ with union-find.
+    \item \textbf{Prim's:} Grow tree from a vertex, always adding minimum-weight edge to a new vertex. Complexity: $O(m \log n)$ with binary heap, $O(m + n \log n)$ with Fibonacci heap.
+\end{itemize}
+
+% ============================================================
+\heading{4. Traversability}
+% ============================================================
+
+\defn{An \textbf{Eulerian trail} is a trail containing every edge exactly once. An \textbf{Eulerian circuit} is a closed Eulerian trail. A graph is \textbf{Eulerian} if it has an Eulerian circuit.}
+
+\thm{\textbf{Eulerian Graph Characterization:} A connected graph $G$ is Eulerian $\iff$ every vertex has even degree.\\
+$G$ has an Eulerian trail (not circuit) $\iff$ $G$ is connected and has exactly two odd-degree vertices (the trail starts at one and ends at the other).}
+
+\defn{A \textbf{Hamiltonian path} is a path visiting every vertex exactly once. A \textbf{Hamiltonian cycle} is a cycle visiting every vertex exactly once. A graph is \textbf{Hamiltonian} if it has a Hamiltonian cycle.}
+
+\thm{\textbf{Dirac's Theorem:} If $G$ has $n \geq 3$ vertices and $\delta(G) \geq n/2$, then $G$ is Hamiltonian.}
+
+\thm{\textbf{Ore's Theorem:} If $G$ has $n \geq 3$ vertices and for every pair of non-adjacent vertices $u,v$, $d(u) + d(v) \geq n$, then $G$ is Hamiltonian.}
+
+\textbf{Note:} Determining Hamiltonicity is NP-complete.
+
+% ============================================================
+\heading{5. Planarity}
+% ============================================================
+
+\defn{A graph is \textbf{planar} if it can be drawn in the plane without edge crossings. Such a drawing is a \textbf{plane graph}. Regions are called \textbf{faces}.}
+
+\thm{\textbf{Euler's Formula:} For a connected plane graph with $n$ vertices, $m$ edges, and $f$ faces: $n - m + f = 2$.}
+
+\textbf{Corollaries (for simple connected planar graphs):}
+\begin{itemize}[nosep]
+    \item If $n \geq 3$: $m \leq 3n - 6$.
+    \item If $n \geq 3$ and no triangles (girth $\geq 4$): $m \leq 2n - 4$.
+    \item Every planar graph has a vertex of degree $\leq 5$.
+\end{itemize}
+
+\textbf{Non-planarity:} $K_5$ and $K_{3,3}$ are not planar (check edge bounds).
+
+\defn{A \textbf{subdivision} of $G$ is obtained by replacing edges with paths. $H$ is a \textbf{subdivision} of $G$ if $H$ can be obtained from $G$ this way.}
+
+\thm{\textbf{Kuratowski's Theorem:} $G$ is planar $\iff$ $G$ contains no subdivision of $K_5$ or $K_{3,3}$.}
+
+\defn{The \textbf{dual graph} $G^*$ of a plane graph $G$ has a vertex for each face of $G$, and an edge between two vertices of $G^*$ for each edge shared by the corresponding faces in $G$.}
+
+\textbf{Properties:}
+\begin{itemize}[nosep]
+    \item $(G^*)^* = G$ (for 2-connected planar graphs).
+    \item $|V(G^*)| = f(G)$, $|E(G^*)| = m(G)$.
+\end{itemize}
+
+% ============================================================
+\heading{6. Colouring}
+% ============================================================
+
+\defn{A \textbf{$k$-colouring} of $G$ is a function $c: V \to \{1,2,\ldots,k\}$ such that $c(u) \neq c(v)$ whenever $\{u,v\} \in E$. The \textbf{chromatic number} $\chi(G)$ is the minimum $k$ for which a $k$-colouring exists.}
+
+\textbf{Basic bounds:} $\chi(G) \leq \Delta(G) + 1$.
+
+\defn{The \textbf{clique number} $\omega(G)$ is the size of the largest complete subgraph. The \textbf{independence number} $\alpha(G)$ is the size of the largest independent set.}
+
+\textbf{Inequality:} $\omega(G) \leq \chi(G)$ and $\chi(G) \cdot \alpha(G) \geq n$.
+
+\thm{\textbf{Greedy Colouring:} Order vertices $v_1, \ldots, v_n$. Colour $v_i$ with the smallest colour not used by its already-coloured neighbors. Uses at most $\Delta(G) + 1$ colours.}
+
+\thm{\textbf{Brooks' Theorem:} If $G$ is connected and is neither a complete graph nor an odd cycle, then $\chi(G) \leq \Delta(G)$.}
+
+\textbf{Special cases:}
+\begin{itemize}[nosep]
+    \item $\chi(K_n) = n$.
+    \item $\chi(C_n) = 2$ if $n$ even, $3$ if $n$ odd.
+    \item $\chi(G) = 2 \iff G$ is bipartite (and non-empty).
+    \item $\chi(G) \leq 4$ for planar $G$ (Four Colour Theorem).
+    \item $\chi(G) \leq 5$ for planar $G$ (easy to prove).
+\end{itemize}
+
+\defn{An \textbf{edge $k$-colouring} assigns colours to edges so adjacent edges have different colours. The \textbf{chromatic index} (or edge chromatic number) $\chi'(G)$ is the minimum $k$.}
+
+\thm{\textbf{Vizing's Theorem:} For any simple graph $G$, $\Delta(G) \leq \chi'(G) \leq \Delta(G) + 1$.}
+
+\textbf{Class 1:} $\chi'(G) = \Delta(G)$. \textbf{Class 2:} $\chi'(G) = \Delta(G) + 1$.
+
+\textbf{König's Theorem:} For bipartite graphs, $\chi'(G) = \Delta(G)$.
+
+\defn{The \textbf{chromatic polynomial} $P_G(k)$ is the number of proper $k$-colourings of $G$.}
+
+\textbf{Properties:}
+\begin{itemize}[nosep]
+    \item $P_G(k)$ is a polynomial in $k$.
+    \item $\chi(G)$ = smallest positive integer $k$ with $P_G(k) > 0$.
+    \item $P_{K_n}(k) = k(k-1)(k-2)\cdots(k-n+1) = k^{\underline{n}}$.
+    \item $P_{K_{m,n}}(k) = (k^{\underline{m}})(k^{\underline{n}})/k = k(k-1)^{m+n-1}$ [correction: should be $(k-1)^m + (k-1)^n - (k-1)^{m+n}$... actually $P_{K_{m,n}}(k) = \sum$ based on parts] Actually: $P_{K_{m,n}}(k) = \sum_{i=0}^{\min(m,n)} (-1)^i \binom{m}{i}\binom{n}{i} i! k^{m+n-i}$ [complex]. Simpler: $P_{K_{m,n}}(k) = k[(k-1)^m + (k-1)^n - (k-1)^{m+n}]$? Let me use standard: For tree $T_n$: $P_{T_n}(k) = k(k-1)^{n-1}$.
+    \item $P_{C_n}(k) = (k-1)^n + (-1)^n(k-1)$.
+    \item For tree $T$ on $n$ vertices: $P_T(k) = k(k-1)^{n-1}$.
+\end{itemize}
+
+\thm{\textbf{Deletion-Contraction:} $P_G(k) = P_{G-e}(k) - P_{G/e}(k)$ for any edge $e$, where $G-e$ deletes $e$ and $G/e$ contracts $e$.}
+
+% ============================================================
+\heading{7. Matchings}
+% ============================================================
+
+\defn{A \textbf{matching} $M$ in $G$ is a set of pairwise non-adjacent edges. A vertex is \textbf{saturated} by $M$ if it is incident to an edge in $M$.\\
+\textbf{Maximum matching:} matching of maximum size.\\
+\textbf{Perfect matching} (or \textbf{1-factor}): matching saturating all vertices (exists only if $n$ even).}
+
+\defn{An \textbf{$M$-augmenting path} is a path starting and ending at unsaturated vertices, with edges alternately not in $M$ and in $M$.}
+
+\thm{A matching $M$ is maximum $\iff$ there is no $M$-augmenting path.}
+
+\defn{For bipartite graph $G = (A \cup B, E)$, a \textbf{matching from $A$ to $B$} saturates all of $A$.}
+
+\thm{\textbf{Hall's Marriage Theorem:} A bipartite graph $G = (A \cup B, E)$ has a matching saturating $A$ $\iff$ for every $S \subseteq A$, $|N(S)| \geq |S|$ (Hall's condition).}
+
+\textbf{Corollary:} If $G$ is $k$-regular bipartite with $k \geq 1$, then $G$ has a perfect matching.
+
+\thm{\textbf{Tutte's Theorem:} $G$ has a perfect matching $\iff$ for every set $S \subseteq V$, the number of odd components of $G - S$ satisfies $\text{odd}(G-S) \leq |S|$.}
+
+\textbf{Corollary (Tutte's 1-Factor Theorem):} $G$ has a 1-factor $\iff$ $\text{odd}(G-S) \leq |S|$ for all $S \subseteq V$.
+
+\defn{A \textbf{vertex cover} is a set $C \subseteq V$ such that every edge has at least one endpoint in $C$.}
+
+\thm{\textbf{König's Theorem:} In a bipartite graph, the size of a maximum matching equals the size of a minimum vertex cover.}
+
+% ============================================================
+\heading{8. Ramsey Theory \& Extremal Graph Theory}
+% ============================================================
+
+\defn{The \textbf{Ramsey number} $R(p,q)$ is the minimum $n$ such that every 2-colouring (red/blue) of the edges of $K_n$ contains either a red $K_p$ or a blue $K_q$.}
+
+\thm{\textbf{Ramsey's Theorem:} $R(p,q)$ exists for all $p,q \geq 1$.}
+
+\textbf{Known values:}
+\begin{itemize}[nosep]
+    \item $R(3,3) = 6$.
+    \item $R(3,4) = 9$.
+    \item $R(4,4) = 18$.
+    \item $R(p,2) = p$ for all $p$.
+\end{itemize}
+
+\thm{\textbf{Upper bound:} $R(p,q) \leq \binom{p+q-2}{p-1}$.\\
+Special case: $R(k,k) \leq \frac{4^k}{\sqrt{\pi k}}$ (rough).}
+
+\defn{The \textbf{Turán graph} $T(n,r)$ is the complete $r$-partite graph with part sizes differing by at most 1, having $n$ vertices total.}
+
+\textbf{Edge count:} $|E(T(n,r))| = \left(1 - \frac{1}{r}\right)\frac{n^2}{2} + O(n)$. Precisely: $|E(T(n,r))| = \binom{n}{2} - \sum_{i=1}^r \binom{\lfloor n/r \rfloor \text{ or } \lceil n/r \rceil}{2}$.
+
+\thm{\textbf{Turán's Theorem:} Among $n$-vertex graphs with no $K_{r+1}$, the Turán graph $T(n,r)$ has the maximum number of edges. Thus, if $G$ has $n$ vertices and more than $|E(T(n,r))|$ edges, then $G$ contains $K_{r+1}$.}
+
+\textbf{Corollary:} If $G$ has $n$ vertices and $m > \left(1 - \frac{1}{r}\right)\frac{n^2}{2}$ edges, then $\omega(G) \geq r+1$.
+
+\defn{The \textbf{extremal number} $\text{ex}(n, H)$ is the maximum number of edges in an $n$-vertex graph with no subgraph isomorphic to $H$.}
+
+\textbf{Examples:}
+\begin{itemize}[nosep]
+    \item $\text{ex}(n, K_{r+1}) = |E(T(n,r))|$ (Turán).
+    \item $\text{ex}(n, K_{s,t}) \leq \frac{1}{2}(s-1)^{1/t} n^{2-1/t} + \frac{t-1}{2}n$ (Kővári–Sós–Turán).
+\end{itemize}
+
+\thm{\textbf{Mantel's Theorem:} A triangle-free graph on $n$ vertices has at most $\lfloor n^2/4 \rfloor$ edges (case $r=2$ of Turán).}
+
+\end{multicols}
+\end{document}
